@@ -1,0 +1,59 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "partials/header.html" %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}"> <!-- أضف رابط CSS إذا لزم الأمر -->
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <!-- Navbar -->
+        {% include 'partials/navbar.html' %}
+        {% include 'partials/sidebar.html' %} <!-- تضمين ملف sidebar هنا -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+           
+            <!-- /.content-header -->
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <!-- إضافة المحتوى هنا -->
+                    {% block content %}
+                    <div class="warehouses-list">
+                        <h1>قائمة المستودعات</h1>
+                        <ul>
+                            {% for warehouse in warehouses %}
+                                <li>{{ warehouse.name }} - {{ warehouse.category }} - {{ warehouse.manager }} - {{ warehouse.phone }}</li>
+                            {% endfor %}
+                        </ul>
+                     </div>
+                    <a href="{% url 'home' %}">Back to Home</a>
+                    {% endblock content %}
+                    <!-- /.row -->
+                    <!-- Main row -->
+                    <!-- إضافة المحتوى هنا -->
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+       
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    {% include "partials/footer.html" %}
+</body>
+</html>
