@@ -18,6 +18,8 @@ Including another URLconf
 
 
 ""
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path,include
 from .import home
@@ -26,5 +28,12 @@ urlpatterns = [
     path('',home.index,name='index'),
     path('', include("Enventory.urls")),
     path('Users/', include ('Users.urls')),
+    path('transactions/', include('Transactions.urls')),  # تأكد من تضمين URLs التطبيق
 
 ]
+
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
