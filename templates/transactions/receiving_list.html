@@ -1,0 +1,94 @@
+<!-- templates/receiving_list.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة الاستلامات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>قائمة الاستلامات</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>رقم المستند</th>
+                <th>تاريخ الاستلام</th>
+                <th>المورد</th>
+                <th>الكمية المستوردة</th>
+                <th>ملاحظات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for receiving in receivings %}
+            <tr>
+                <td>{{ receiving.document_number }}</td>
+                <td>{{ receiving.receiving_date }}</td>
+                <td>{{ receiving.supplier }}</td>
+                <td>{{ receiving.imported_quantity }}</td>
+                <td>{{ receiving.notes }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">لا توجد سجلات للاستلام</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="{% url 'add_receiving' %}">
+        <button>انتقل إلى صفحة أخرى</button>
+    </a>
+</body>
+</html>
