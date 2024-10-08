@@ -1,0 +1,11 @@
+<h1>Create Return Receiving</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <p>Warehouse: {{ form.warehouse_display.value }}</p>
+    <p>Supplier: {{ form.supplier_display.value }}</p>
+    <p>Station: {{ form.station_display.value }}</p>
+
+    <button type="submit">Submit</button>
+</form>

@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'Enventory_Manag.wsgi.application'
 DATABASES = {
      "default": {
          "ENGINE": "django.db.backends.mysql",
-         "NAME": "Enventory_Manag",
+         "NAME": "Enventory_Manags",
          "USER": "root",
          "PASSWORD": "",
          "HOST": "127.0.0.1",

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if form.instance.pk %}تعديل المرتجع{% else %}إضافة مرتجع جديد{% endif %}</title>
+</head>
+<body>
+    <h1>{% if form.instance.pk %}تعديل المرتجع{% else %}إضافة مرتجع جديد{% endif %}</h1>
+    
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">حفظ</button>
+    </form>
+
+    <a href="{% url 'receiving_return_list' %}">رجوع إلى قائمة المرتجعات</a>
+</body>
+</html>
