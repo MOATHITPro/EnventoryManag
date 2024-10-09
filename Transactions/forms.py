@@ -1,5 +1,5 @@
 from django import forms
-from .models import Receiving,Dispatch, ReceivingReturn
+from .models import Receiving,Dispatch, ReceivingReturn,DispatchReturn,DamageOperation
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -60,4 +60,45 @@ class ReceivingReturnForm(forms.ModelForm):
                   'expected_return_date', 'actual_return_date', 'item_notes']
         widgets = {
             'receiving': forms.Select(attrs={'id': 'id'}),  # تخصيص الـ id هنا ليكون "id"
+        }
+
+
+
+
+        
+class DispatchReturnForm(forms.ModelForm):
+    class Meta:
+        model = DispatchReturn
+        fields = ['dispatch', 'return_date', 'document_number', 'delivered_by_name', 
+                  'delivered_by_id', 'received_by_name', 'received_by_id', 
+                  'notes', 'attachments',  'returned_quantity', 
+                  'expected_return_date', 'actual_return_date', 'item_notes']
+        widgets = {
+            'dispatch': forms.Select(attrs={'id': 'id'}),  # تخصيص الـ id هنا ليكون "id"
+        }
+
+
+
+
+
+class DamageOperationForm(forms.ModelForm):
+    class Meta:
+        model = DamageOperation
+        fields = [
+            'warehouse',
+            'damage_date',
+            'document_number',
+            'delivered_by_name',
+            'delivered_by_id',
+            'received_by_name',
+            'received_by_id',
+            'notes',
+            'attachments',
+            'item',
+            'damaged_quantity',
+            'reason',
+            'item_notes',
+        ]
+        widgets = {
+            'damage_date': forms.DateInput(attrs={'type': 'date'}),
         }

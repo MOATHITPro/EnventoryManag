@@ -147,11 +147,11 @@ class DispatchReturn(models.Model):
         beneficiary = models.ForeignKey('Enventory.Beneficiary', on_delete=models.CASCADE, editable=False)
        
            # الحقول الخاصة بعملية المرتجع
-        document_number = models.CharField(max_length=50, unique=True, blank=False)  # الرقم الورقي للمرتجع
+        document_number = models.CharField(max_length=50)  # الرقم الورقي للمرتجع
         delivered_by_name = models.CharField(max_length=100)  # اسم المسلم
-        delivered_by_id = models.CharField(max_length=50, unique=True)  # الرقم الجهادي للمسلم
+        delivered_by_id = models.CharField(max_length=50, )  # الرقم الجهادي للمسلم
         received_by_name = models.CharField(max_length=100)  # اسم المستلم
-        received_by_id = models.CharField(max_length=50, unique=True)  # الرقم الجهادي للمستلم
+        received_by_id = models.CharField(max_length=50, )  # الرقم الجهادي للمستلم
         notes = models.TextField(blank=True, null=True)  # البيان
         attachments = models.FileField(upload_to='return_attachments/', blank=True, null=True)  # ملفات مرفقة مع عملية المرتجع
 
@@ -161,55 +161,74 @@ class DispatchReturn(models.Model):
         expected_return_date = models.DateField(default=timezone.now, blank=True, null=True)  # تاريخ الرد المفترض
         actual_return_date = models.DateField(default=timezone.now, blank=True, null=True)  # تاريخ الرد الفعلي
         item_notes = models.TextField(blank=True, null=True)  # ملاحظات
-
-
+          
+     
         def save(self, *args, **kwargs):
+        # تحقق من أن الكمية المرتجعة لا يمكن أن تكون أقل من الصفر
+         if self.returned_quantity < 0:
+            raise ValidationError("Returned quantity cannot be negative.")
+        
+        # تعبئة الحقول المرتبطة تلقائيًا إذا كانت العملية مرتبطة
+         if self.dispatch:
+            self.dispatch_date = self.dispatch.dispatch_date
+            self.warehouse = self.dispatch.warehouse
+            self.beneficiary = self.dispatch.beneficiary
+            self.item = self.dispatch.item
 
-                # تحقق من أن الكمية المرتجعة لا يمكن أن تكون أقل من الصفر
-            if self.returned_quantity < 0:
-                raise ValidationError("Returned quantity cannot be negative.")
+        # تحديث المخزون إذا كانت الكمية المرتجعة أقل من أو تساوي الكمية المصروفة
+         if self.returned_quantity > 0 and self.returned_quantity <= self.dispatch.quantity_dispatched:
+            self.item.quantity_in_stock += self.returned_quantity
+            self.item.save()  # حفظ التغييرات في المخزون
+            
+            # تحديث الكمية المتبقية في عملية الصادر
+            self.dispatch.quantity_dispatched -= self.returned_quantity
+            self.dispatch.save()  # حفظ التغييرات في عملية الصادر
 
-        # عند اختيار عملية الوارد، يتم تعبئة الحقول المرتبطة بها تلقائيًا
-            if self.dispatch:
-                self.dispatch_date = self.dispatch.dispatch_date
-                self.warehouse = self.dispatch.warehouse
-                self.beneficiary = self.dispatch.beneficiary
-                self.item = self.dispatch.item
+        # استدعاء super().save لحفظ الكائن الحالي
+         super().save(*args, **kwargs)
 
-             # توليد رقم ورقي (document_number) فريد إذا لم يتم تقديمه
-            if not self.document_number:
-             # الحصول على آخر رقم ورقي موجود في قاعدة البيانات
-               last_document_number = DispatchReturn.objects.aggregate(Max('document_number'))['document_number__max']
-    
-            # إذا كان هناك رقم ورقي سابق، نزيده بقيمة 1
-            if last_document_number and last_document_number.isdigit():
-                self.document_number = str(int(last_document_number) + 1)
-            else:
-              # إذا لم يكن هناك أرقام سابقة، نبدأ من 1001 (أو أي رقم تبدأ منه)
-             self.document_number = "1001"
-
-            # تحقق من أن الكمية المرتجعة لا تتجاوز الكمية المصروفة في عملية الصادر
-            if self.returned_quantity > self.dispatch.quantity_dispatched:
-                raise ValidationError(f"The returned quantity ({self.returned_quantity}) cannot exceed the dispatched quantity ({self.dispatch.quantity_dispatched}).")
-                        
-                     # إذا كانت الكمية المرتجعة أقل من أو تساوي الكمية المصروفة، تحديث المخزون
-            if self.returned_quantity <= self.dispatch.quantity_dispatched:
-            # أضف الكمية المرتجعة إلى المخزون
-                self.item.quantity_in_stock += self.returned_quantity
-                self.item.save()          
-                       
-             # قم بتحديث الكمية المتبقية في الصادر (لإظهار الكمية التي لم تُرجع)
-                self.dispatch.quantity_dispatched -= self.returned_quantity
-                self.dispatch.save()     
-                       
-                        # تحقق من الكمية المتاحة
-                super().save(*args, **kwargs)
-      
         def __str__(self):
-             return f"Return from Dispatch {self.dispatch.id} on {self.return_date}"
+         return f"Return from Dispatch {self.dispatch.id} on {self.return_date}"
        
-       
-       
-       
-       
-    
+
+
+
+
+class DamageOperation(models.Model):
+    # الحقول العامة لعملية التلف
+    warehouse = models.ForeignKey('Enventory.Warehouse', on_delete=models.CASCADE)  # المخزن الذي يحتوي على الأصناف التالفة
+    damage_date = models.DateField(default=timezone.now)  # تاريخ التلف
+    document_number = models.CharField(max_length=50, unique=True, blank=True)  # الرقم الورقي
+    delivered_by_name = models.CharField(max_length=100)  # اسم المسلم
+    delivered_by_id = models.CharField(max_length=50)  # الرقم الجهادي للمسلّم
+    received_by_name = models.CharField(max_length=100)  # اسم المستلم
+    received_by_id = models.CharField(max_length=50)  # الرقم الجهادي للمستلم
+    notes = models.TextField(blank=True, null=True)  # البيان
+    attachments = models.FileField(upload_to='damage_attachments/', blank=True, null=True)  # ملفات مرفقة مع عملية التلف
+
+    # الأصناف التالفة
+    item = models.ForeignKey('Enventory.Item', on_delete=models.CASCADE)  # الصنف التالف
+    damaged_quantity = models.PositiveIntegerField()  # الكمية التالفة
+    reason = models.TextField(blank=True, null=True)  # سبب التلف
+    item_notes = models.TextField(blank=True, null=True)  # ملاحظات على الصنف التالف
+
+    def save(self, *args, **kwargs):
+        # تحقق من أن الكمية التالفة لا تتجاوز الكمية المتاحة في المخزون
+        if self.damaged_quantity > self.item.quantity_in_stock:
+            raise ValidationError(f"The damaged quantity ({self.damaged_quantity}) cannot exceed the available stock ({self.item.quantity_in_stock}).")
+        
+        # خصم الكمية التالفة من المخزون
+        self.item.quantity_in_stock -= self.damaged_quantity
+        self.item.save()
+
+        # تنفيذ الحفظ
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Damage Operation {self.document_number} - {self.warehouse.name} - {self.item.name}"
+
+
+
+
+
+

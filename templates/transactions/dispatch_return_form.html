@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إرجاع الصادر</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* تنسيق الرسائل */
+        #message-container {
+            margin: 20px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>نموذج إرجاع الوارد</h1>
+    
+    <!-- قسم لعرض الرسائل -->
+    <div id="message-container"></div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <!-- حقول جديدة لعرض التفاصيل -->
+        <input type="text" id="id_dispatch_date" name="dispatch_date" placeholder="تاريخ الصادر" readonly>
+        <input type="text" id="id_warehouse" name="warehouse" placeholder="المخزن" readonly>
+        <input type="text" id="id_beneficiary" name="beneficiary" placeholder="المستفيد" readonly>
+        <input type="text" id="id_item" name="item" placeholder="الصنف" readonly>
+        
+        <button type="submit">تقديم</button>
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#id').change(function() {
+                var dispatchId  = $(this).val();
+
+                if (dispatchId) {
+                    $.ajax({
+
+                        url: '/transactions/dispatch/' + dispatchId + '/details/',  // تأكد من استخدام الرابط الصحيح
+                        method: 'GET',
+                        success: function(data) {
+                            $('#id_dispatch_date').val(data.dispatch_date);
+                            $('#id_warehouse').val(data.warehouse);
+                            $('#id_beneficiary').val(data.beneficiary);
+                            $('#id_item').val(data.item);
+                            $('#message-container').html('<div class="success">تم جلب التفاصيل بنجاح.</div>'); // رسالة نجاح
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('حدث خطأ أثناء جلب البيانات:', error);
+                            $('#message-container').html('<div class="error">حدث خطأ أثناء جلب البيانات. يرجى التحقق من البيانات المدخلة.</div>'); // رسالة خطأ
+                        }
+                    });
+                } else {
+                    // مسح الحقول إذا لم يتم اختيار أي عملية وارد
+                    $('#id_dispatch_date').val('');
+                    $('#id_warehouse').val('');
+                    $('#id_beneficiary').val('');
+                    $('#id_item').val('');
+                    $('#message-container').html(''); // مسح الرسائل عند عدم وجود اختيار
+                }
+            });
+        });
+    </script>
+</body>
+</html>
