@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تقرير المخزون</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: right;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>تقرير المخزون</h1>
+    <h2>التقرير من {{ start_date }} إلى {{ end_date }}</h2>
+
+    <h3>عمليات الوارد للمخزن</h3>
+    <table>
+        <tr>
+            <th>تاريخ الوارد</th>
+            <th>رقم الوثيقة</th>
+            <th>المورد</th>
+            <th>الكمية المستوردة</th>
+        </tr>
+        {% for row in report_data.Receiving %}
+        <tr>
+            <td>{{ row.receiving_date }}</td>
+            <td>{{ row.document_number }}</td>
+            <td>{{ row.supplier.name }}</td>
+            <td>{{ row.imported_quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>عمليات الصادر من المخزن</h3>
+    <table>
+        <tr>
+            <th>تاريخ الصادر</th>
+            <th>رقم الوثيقة</th>
+            <th>المستفيد</th>
+            <th>الكمية المصروفة</th>
+        </tr>
+        {% for row in report_data.Dispatch %}
+        <tr>
+            <td>{{ row.dispatch_date }}</td>
+            <td>{{ row.document_number }}</td>
+            <td>{{ row.beneficiary.name }}</td>
+            <td>{{ row.quantity_dispatched }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>عمليات المرتجع</h3>
+    <table>
+        <tr>
+            <th>تاريخ المرتجع</th>
+            <th>رقم الوثيقة</th>
+            <th>المورد</th>
+            <th>الكمية المرتجعة</th>
+        </tr>
+        {% for row in report_data.Return %}
+        <tr>
+            <td>{{ row.return_date }}</td>
+            <td>{{ row.document_number }}</td>
+            <td>{{ row.supplier.name }}</td>
+            <td>{{ row.returned_quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>عمليات التلف</h3>
+    <table>
+        <tr>
+            <th>تاريخ التلف</th>
+            <th>رقم الوثيقة</th>
+            <th>الصنف</th>
+            <th>الكمية التالفة</th>
+        </tr>
+        {% for row in report_data.Damage %}
+        <tr>
+            <td>{{ row.damage_date }}</td>
+            <td>{{ row.document_number }}</td>
+            <td>{{ row.item.name }}</td>
+            <td>{{ row.damaged_quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

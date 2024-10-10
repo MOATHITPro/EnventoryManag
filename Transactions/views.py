@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import ReceivingForm ,Receiving,DispatchForm,ReceivingReturnForm,DispatchReturnForm,DamageOperationForm
-from .models import Dispatch,ReceivingReturn,Receiving,DispatchReturn,DamageOperation
+from .forms import ReceivingForm ,Receiving,DispatchForm,ReceivingReturnForm,DispatchReturnForm,DamageOperationForm,TransferOperationForm, TransferItemForm
+from .models import Dispatch,ReceivingReturn,Receiving,DispatchReturn,DamageOperation,TransferOperation, TransferItem
 from django.views import View
 from django.http import HttpResponse
 from django.contrib import messages
@@ -129,3 +129,35 @@ class DamageOperationCreateView(CreateView):
     def form_valid(self, form):
         # تنفيذ التحقق الخاص بك أو تخصيص البيانات هنا إذا لزم الأمر
         return super().form_valid(form)
+        
+
+
+
+
+
+
+
+
+def transfer_create_view(request):
+    if request.method == 'POST':
+        operation_form = TransferOperationForm(request.POST, request.FILES)
+        item_form = TransferItemForm(request.POST)
+        
+        if operation_form.is_valid() and item_form.is_valid():
+            transfer_operation = operation_form.save()
+            transfer_item = item_form.save(commit=False)
+            transfer_item.transfer_operation = transfer_operation
+            transfer_item.save()
+            return redirect('transfer_create')  # Redirect to a success page after saving
+    else:
+        operation_form = TransferOperationForm()
+        item_form = TransferItemForm()
+
+    context = {
+        'operation_form': operation_form,
+        'item_form': item_form,
+    }
+    return render(request, 'Transactions/transfer_form.html', context)
+
+def transfer_success_view(request):
+    return render(request, 'Transactions/transfer_success.html')

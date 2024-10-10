@@ -232,3 +232,47 @@ class DamageOperation(models.Model):
 
 
 
+class TransferOperation(models.Model):
+    source_warehouse = models.ForeignKey('Enventory.Warehouse', related_name='transfers_out', on_delete=models.CASCADE)
+    destination_warehouse = models.ForeignKey('Enventory.Warehouse', related_name='transfers_in', on_delete=models.CASCADE)
+    transfer_date = models.DateTimeField(auto_now_add=True)
+    paper_number = models.CharField(max_length=100)
+    sender_name = models.CharField(max_length=255)
+    sender_job_number = models.CharField(max_length=50)  # الرقم الجهادي للمسلّم
+    receiver_name = models.CharField(max_length=255)
+    receiver_job_number = models.CharField(max_length=50)  # الرقم الجهادي للمستلم
+    statement = models.TextField(blank=True, null=True)  # البيان
+    attachments = models.FileField(upload_to='attachments/', blank=True, null=True)  # ملفات مرفقة
+
+    def __str__(self):
+        return f'Transfer from {self.source_warehouse} to {self.destination_warehouse} on {self.transfer_date}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # عند حفظ عملية التحويل، تأكد من تعديل المخزون بناءً على الأصناف المحولة
+        for transfer_item in self.transfer_items.all():
+            # خصم الكمية من المخزن المصدر
+            source_item = Item.objects.get(name=transfer_item.item.name, warehouse=self.source_warehouse)
+            source_item.quantity_in_stock -= transfer_item.quantity_transferred
+            source_item.save()
+
+            # إضافة الكمية إلى المخزن الوجهة
+            destination_item, created = Item.objects.get_or_create(
+                name=transfer_item.item.name,
+                warehouse=self.destination_warehouse
+            )
+            destination_item.quantity_in_stock += transfer_item.quantity_transferred
+            destination_item.save()
+
+
+
+
+class TransferItem(models.Model):
+    transfer_operation = models.ForeignKey(TransferOperation, related_name='transfer_items', on_delete=models.CASCADE)
+    item = models.ForeignKey('Enventory.Item', on_delete=models.CASCADE)  # الصنف المحول
+    quantity_transferred = models.PositiveIntegerField()  # الكمية المحولة
+    reason = models.TextField(blank=True, null=True)  # السبب
+    notes = models.TextField(blank=True, null=True)  # ملاحظات
+
+    def __str__(self):
+        return f'{self.item.name} - {self.quantity_transferred}'

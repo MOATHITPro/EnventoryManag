@@ -29,6 +29,7 @@ urlpatterns = [
     path('', include("Enventory.urls")),
     path('Users/', include ('Users.urls')),
     path('transactions/', include('Transactions.urls')),  # تأكد من تضمين URLs التطبيق
+    path('reports/', include('Reports.urls')),  # تأكد من تضمين URLs التطبيق
 
 ]
 

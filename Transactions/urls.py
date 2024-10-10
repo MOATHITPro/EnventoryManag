@@ -1,7 +1,7 @@
 
 
 from django.urls import path
-from .views import add_receiving,receiving_list,create_dispatch,dispatch_list,get_receiving_details,receiving_return_create,dispatch_return_create,get_dispatch_details,DamageOperationCreateView
+from .views import add_receiving,receiving_list,create_dispatch,dispatch_list,get_receiving_details,receiving_return_create,dispatch_return_create,get_dispatch_details,DamageOperationCreateView,transfer_create_view,transfer_success_view
 from django.views.generic import TemplateView  # أضف هذا السطر لاستيراد TemplateView
 
 urlpatterns = [
@@ -16,5 +16,9 @@ urlpatterns = [
     path('dispatch/<int:id>/details/', get_dispatch_details, name='get_dispatch_details'),  # رابط لجلب تفاصيل عملية الوارد
 
     path('create-damage-operation/', DamageOperationCreateView.as_view(), name='create-damage-operation'),
+
+
+    path('transfer/', transfer_create_view, name='transfer_create'),
+    path('transfer/success/', transfer_success_view, name='transfer_success'),
 ]
 

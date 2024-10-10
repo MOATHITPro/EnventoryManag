@@ -1,5 +1,5 @@
 from django import forms
-from .models import Receiving,Dispatch, ReceivingReturn,DispatchReturn,DamageOperation
+from .models import Receiving,Dispatch, ReceivingReturn,DispatchReturn,DamageOperation,TransferOperation, TransferItem
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -102,3 +102,32 @@ class DamageOperationForm(forms.ModelForm):
         widgets = {
             'damage_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+
+
+
+
+
+
+class TransferOperationForm(forms.ModelForm):
+    class Meta:
+        model = TransferOperation
+        fields = ['source_warehouse', 
+                  'destination_warehouse', 
+                  'paper_number', 
+                  'sender_name', 
+                  'sender_job_number', 
+                  'receiver_name', 
+                  'receiver_job_number', 
+                  'statement', 
+                  'attachments',
+                  ]
+
+class TransferItemForm(forms.ModelForm):
+    class Meta:
+        model = TransferItem
+        fields = ['item', 
+                  'quantity_transferred', 
+                  'reason', 
+                  'notes',
+                  ]

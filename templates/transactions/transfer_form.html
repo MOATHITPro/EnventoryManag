@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Transfer</title>
+</head>
+<body>
+    <h1>Create Warehouse Transfer</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <h2>Transfer Operation</h2>
+        {{ operation_form.as_p }}
+        
+        <h2>Transfer Item</h2>
+        {{ item_form.as_p }}
+        
+        <button type="submit">Submit Transfer</button>
+    </form>
+</body>
+</html>
