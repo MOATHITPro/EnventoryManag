@@ -1,0 +1,74 @@
+{% load static %}  <!-- تحميل مكتبة static -->
+
+<!-- warehouse_status_report_form.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تقرير حالة المخزن</title>
+    <style>
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('{{ STATIC_URL }}fonts/DejaVuSans.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>تقرير حالة المخزن</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="warehouse">اختر المخزن:</label>
+        <select name="warehouse" id="warehouse" required>
+            {% for warehouse in warehouses %}
+            <option value="{{ warehouse.id }}" {% if warehouse.id == warehouse_id %}selected{% endif %}>
+                {{ warehouse.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" name="generate_report">عرض التقرير</button>
+        <button type="submit" name="generate_pdf_warehouse_status">توليد PDF</button>
+        <button type="submit" name="generate_excel_warehouse_status">توليد Excel</button>
+    </form>
+
+    {% if report_data %}
+    <h2>تفاصيل المخزن: {{ report_data.Warehouse.name }}</h2>
+
+    <h3>الأصناف المتوفرة</h3>
+    <table>
+        <tr>
+            <th>اسم الصنف</th>
+            <th>الكمية المتوفرة</th>
+        </tr>
+        {% for item in report_data.Items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity_in_stock }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>

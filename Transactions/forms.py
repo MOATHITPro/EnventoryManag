@@ -35,6 +35,7 @@ class DispatchForm(forms.ModelForm):
             'warehouse',
             'dispatch_date',
             'beneficiary',
+            'document_number',
             'deliverer_name',
             'deliverer_id',
             'recipient_name',

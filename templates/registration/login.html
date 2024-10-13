@@ -1,4 +1,4 @@
-
+{% comment %} 
 <!doctype html>
 <html lang="en">
 
@@ -82,7 +82,12 @@
   </script>
 </body>
 
-</html>
+</html> {% endcomment %}
 
 
-
+<h2>تسجيل الدخول</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">دخول</button>
+</form>

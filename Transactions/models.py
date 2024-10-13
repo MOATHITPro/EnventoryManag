@@ -53,6 +53,7 @@ class Receiving(models.Model):
 class Dispatch(models.Model):
     warehouse = models.ForeignKey('Enventory.Warehouse', on_delete=models.CASCADE)
     dispatch_date = models.DateField(default=timezone.now)
+    document_number = models.CharField(max_length=50, default=1)
     beneficiary = models.ForeignKey('Enventory.Beneficiary', on_delete=models.CASCADE)
     deliverer_name = models.CharField(max_length=255)
     deliverer_id = models.CharField(max_length=50)  # الرقم الجهادي للمسلّم

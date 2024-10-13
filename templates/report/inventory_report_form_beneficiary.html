@@ -1,0 +1,83 @@
+{% load static %}
+
+<!-- inventory_report_form.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تقرير عمليات الشحن</title>
+    <style>
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('{{ STATIC_URL }}fonts/DejaVuSans.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>تقرير عمليات الشحن للمستفيد المحدد</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <label for="start_date">تاريخ البداية:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required>
+
+        <label for="end_date">تاريخ النهاية:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" required>
+
+        <label for="beneficiary">المستفيد:</label>
+        <select name="beneficiary" id="beneficiary" required>
+            {% for beneficiary in beneficiaries %}
+                <option value="{{ beneficiary.id }}" {% if beneficiary.id == beneficiary_id %}selected{% endif %}>
+                    {{ beneficiary.full_name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Buttons for generating reports -->
+        <button type="submit" name="generate_report">توليد التقرير</button>
+        <button type="submit" name="generate_pdf_report_beneficiary">توليد PDF</button>
+        <button type="submit" name="generate_excel_report_beneficiary">توليد Excel</button>
+    </form>
+
+    {% if report_data %}
+    <h2>التقرير لعمليات الشحن للمستفيد {{ beneficiary.full_name }} من {{ start_date }} إلى {{ end_date }}</h2>
+
+    <h3>عمليات الصادر من المخزن</h3>
+    <table border="1">
+        <tr>
+            <th>تاريخ الصادر</th>
+            <th>رقم الوثيقة</th>
+            <th>اسم المستفيد</th>
+            <th>الكمية المصروفة</th>
+            <th>اسم الموزع</th>
+            <th>اسم المستلم</th>
+            <th>الصنف</th>
+            <th>المخزن</th>
+
+        </tr>
+        {% for dispatch in report_data.Dispatch %}
+        <tr>
+            <td>{{ dispatch.dispatch_date }}</td>
+            <td>{{ dispatch.document_number }}</td>
+            <td>{{ dispatch.beneficiary.full_name }}</td>
+            <td>{{ dispatch.quantity_dispatched }}</td>
+            <td>{{ dispatch.deliverer_name }}</td>
+            <td>{{ dispatch.recipient_name }}</td>
+            <td>{{ dispatch.warehouse.name }}</td>
+            <td>{{ dispatch.item.name }}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>لا توجد بيانات للتقرير.</p>
+    {% endif %}
+</body>
+</html>

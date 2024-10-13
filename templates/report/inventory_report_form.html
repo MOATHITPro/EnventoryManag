@@ -1,30 +1,55 @@
+
+{% load static %}  <!-- تحميل مكتبة static -->
+
+
 <!-- inventory_report_form.html -->
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>تقرير حركة المخزون</title>
+    <title>تقرير حركة المخزون حسب مخزن محدد</title>
+     <style>
+       
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('{{ STATIC_URL }}fonts/DejaVuSans.ttf') format('truetype');
+        }
+        
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+    </style> 
+        
 </head>
 <body>
     <h1>تقرير حركة المخزون</h1>
-    <form method="post">
+
+    <form method="POST" >
         {% csrf_token %}
-        <label for="warehouse_id">المخزن:</label>
-        <select name="warehouse_id" id="warehouse_id" required>
+        
+        
+        
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" required>
+
+        <label for="warehouse">Select Warehouse:</label>
+        <select name="warehouse" id="warehouse">
             {% for warehouse in warehouses %}
-                <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+            <option value="{{ warehouse.id }}" {% if warehouse.id == warehouse_id %}selected{% endif %}>
+                {{ warehouse.name }}
+            </option>
             {% endfor %}
         </select>
         
-        <label for="start_date">تاريخ البداية:</label>
-        <input type="date" name="start_date" id="start_date" required> <!-- إضافة id -->
-        
-        <label for="end_date">تاريخ النهاية:</label>
-        <input type="date" name="end_date" id="end_date" required> <!-- إضافة id -->
-        
-        <button type="submit">توليد التقرير</button>
-        <button type="submit" name="generate_pdf" value="true">توليد PDF</button>
-        <button type="submit" name="generate_excel" value="true">توليد Excel</button>
+        <button type="submit" name="generate_report">Generate Report</button>
+        <button type="submit" name="generate_pdf">Generate PDF</button>
+        <button type="submit" name="generate_excel">Generate Excel</button>
     </form>
     
     {% if report_data %}
@@ -37,13 +62,17 @@
             <th>رقم الوثيقة</th>
             <th>المورد</th>
             <th>الكمية المستوردة</th>
+            <th>الصنف </th>
+
         </tr>
         {% for row in report_data.Receiving %}
         <tr>
             <td>{{ row.receiving_date }}</td>
             <td>{{ row.document_number }}</td>
-            <td>{{ row.supplier.name }}</td>
+            <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.imported_quantity }}</td>
+            <td>{{ row.item.name}}</td>
+
         </tr>
         {% endfor %}
     </table>
@@ -55,13 +84,17 @@
             <th>رقم الوثيقة</th>
             <th>المستفيد</th>
             <th>الكمية المصروفة</th>
+            <th>الصنف </th>
+
         </tr>
         {% for row in report_data.Dispatch %}
         <tr>
             <td>{{ row.dispatch_date }}</td>
             <td>{{ row.document_number }}</td>
-            <td>{{ row.beneficiary.name }}</td>
+            <td>{{ row.beneficiary.full_name }}</td>
             <td>{{ row.quantity_dispatched }}</td>
+            <td>{{ row.item.name}}</td>
+
         </tr>
         {% endfor %}
     </table>
@@ -73,13 +106,17 @@
             <th>رقم الوثيقة</th>
             <th>المورد</th>
             <th>الكمية المرتجعة</th>
+            <th>الصنف </th>
+
         </tr>
         {% for row in report_data.Return %}
         <tr>
             <td>{{ row.return_date }}</td>
             <td>{{ row.document_number }}</td>
-            <td>{{ row.supplier.name }}</td>
+            <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.returned_quantity }}</td>
+            <td>{{ row.item.name}}</td>
+
         </tr>
         {% endfor %}
     </table>

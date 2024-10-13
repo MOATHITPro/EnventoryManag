@@ -115,10 +115,35 @@
                   <li class="nav-item">
                     <a href="{% url 'inventory_report' %}" class="nav-link">
                       <i class="nav-icon far fa-circle text-danger"></i>
-                      <p class="text">عملية تحويل مخزني</p>
+                      <p class="text">تقرير حركة عامه للمخزن بحسب مخزن محدد</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'inventory_report_item' %}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-danger"></i>
+                      <p class="text">تقرير حركة عامه للمخزن بحسب صنف محدد</p>
                     </a>
                   </li>
                   
+                  <li class="nav-item">
+                    <a href="{% url 'warehouse_status_report' %}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-danger"></i>
+                      <p class="text">تقرير حالة المخزن بحسب مخزن محدد</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'item_status_report' %}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-danger"></i>
+                      <p class="text">تقرير حالة الصنف في المخازن</p>
+                    </a>
+                  </li>
+                  
+                  <li class="nav-item">
+                    <a href="{% url 'inventory_report_beneficiary' %}" class="nav-link">
+                      <i class="nav-icon far fa-circle text-danger"></i>
+                      <p class="text">تقرير الصادر بحسب مستفيد محدد </p>
+                    </a>
+                  </li>
                   <li class="nav-header">EXAMPLES</li>
                   <li class="nav-item">
                     <a href="pages/calendar.html" class="nav-link">
