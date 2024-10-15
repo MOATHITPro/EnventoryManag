@@ -1,28 +1,54 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
+from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
 from io import BytesIO
 import os
 import arabic_reshaper
 from bidi.algorithm import get_display
-from Transactions.models import Dispatch
-from Enventory.models import Beneficiary
+from Transactions.models import Dispatch,Receiving
+from Enventory.models import Beneficiary,Supplier
+from reportlab.lib.units import cm
 
 # دالة لمعالجة النصوص العربية
-def process_arabic_text(text):
+def reshape_arabic_text(text):
     reshaped_text = arabic_reshaper.reshape(text)
     bidi_text = get_display(reshaped_text)
     return bidi_text
 
-# دالة لرسم النص من اليمين إلى اليسار
-def draw_right_to_left_text(p, text, x, y, font_name='Arial', font_size=12):
-    reshaped_text = process_arabic_text(text)
-    p.setFont(font_name, font_size)
-    p.drawRightString(x, y, reshaped_text)
+# دالة لإنشاء الجدول
+def create_table(data, headers, pdf_canvas, x_offset, y_offset, col_widths):
+    reshaped_headers = [reshape_arabic_text(header) for header in headers]
+    
+    reshaped_data = []
+    for row in data:
+        reshaped_row = [reshape_arabic_text(str(cell)) for cell in row]
+        reshaped_data.append(reshaped_row)
+    
+    table_data = [reshaped_headers] + reshaped_data
+    table = Table(table_data, colWidths=col_widths)
 
-# دالة توليد تقرير PDF بدون جدول، عرض البيانات بشكل أفقي
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Arial'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+
+    # رسم الجدول في مكانه
+    table.wrapOn(pdf_canvas, x_offset, y_offset)
+    table.drawOn(pdf_canvas, x_offset, y_offset)
+
+    # حساب ارتفاع الجدول
+    row_height = 20  # ارتفاع الصف الواحد
+    total_height = row_height * (len(table_data) + 1)  # حساب ارتفاع الجدول
+    return total_height  # إرجاع ارتفاع الجدول
+
+# دالة توليد تقرير PDF
 def generate_pdf_report_beneficiary(report_data, beneficiary_id, start_date, end_date):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
@@ -33,67 +59,78 @@ def generate_pdf_report_beneficiary(report_data, beneficiary_id, start_date, end
         pdfmetrics.registerFont(TTFont('Arial', font_path))
         p.setFont('Arial', 12)
     else:
-        raise FileNotFoundError("خط sky لم يتم العثور عليه.")
+        raise FileNotFoundError("خط Arial لم يتم العثور عليه.")
 
     # معلومات المستفيد
     beneficiary = Beneficiary.objects.get(id=beneficiary_id)
-    draw_right_to_left_text(p, f"المستفيد: {beneficiary.full_name}", 550, 800)
-    draw_right_to_left_text(p, f"فترة التقرير: {start_date} إلى {end_date}", 550, 780)
-    draw_right_to_left_text(p, f"فترة التقرير: {start_date} إلى {end_date}", 550, 780)
+    title_text = f"تقرير المستفيد: {beneficiary.full_name}"
+    date_text = f"فترة التقرير: {start_date} إلى {end_date}"
 
-    draw_right_to_left_text(p, "تفاصيل العمليات:", 550, 760)
+    # رسم العنوان بشكل صحيح من اليمين لليسار
+    title_y_offset = 800
+    date_y_offset = 780
+    p.drawRightString(550, title_y_offset, reshape_arabic_text(title_text))
+    p.drawRightString(550, date_y_offset, reshape_arabic_text(date_text))
+    y_offset = 700  # تعريف موضع بداية الجدول
 
-    y_offset = 700
-
-   # عرض تفاصيل العمليات
+    # إعداد البيانات للجدول
     for section, data in report_data.items():
-     if section == 'Dispatch':
-        for row in data:
-            # معالجة البيانات
-            dispatch_date = process_arabic_text(str(row.dispatch_date))
-            document_number = process_arabic_text(str(row.document_number))
-            recipient_name = process_arabic_text(str(row.recipient_name))
-            warehouse_name = process_arabic_text(row.warehouse.name)
-            item_name = process_arabic_text(row.item.name if row.item else 'N/A')
-            quantity_dispatched = process_arabic_text(str(row.quantity_dispatched))
+        if section == 'Dispatch':
+            headers = ['التاريخ', 'رقم الوثيقة', 'اسم المسلم', 'المخزن', 'الصنف', 'الكمية المرسلة']
+            table_data = [
+                [
+                    row.dispatch_date,
+                    row.document_number,
+                    row.recipient_name,
+                    row.warehouse.name,
+                    row.item.name if row.item else 'N/A',
+                    row.quantity_dispatched
+                ]
+                for row in data
+            ]
 
-            # عرض البيانات بنفس تنسيق معلومات المستفيد
-            draw_right_to_left_text(p, f"التاريخ: {dispatch_date}", 550, 800 )
-            # draw_right_to_left_text(p, dispatch_date, 350, y_offset)
-            # draw_right_to_left_text(p, f"المستفيد: {beneficiary.full_name}", 550, 800)
+            y_offset -= 20  # مساحة تحت العنوان
+            p.drawRightString(550, y_offset, reshape_arabic_text("  تفاصيل عمليات الصرف:"))
 
-            y_offset -= 20  # الانتقال للسطر التالي
+            # تحديد عرض الأعمدة للجدول
+            col_widths = [3 * cm, 3 * cm, 3 * cm, 3 * cm, 3 * cm, 3 * cm]
 
-            draw_right_to_left_text(p, f"رقم الوثيقة:", 550, y_offset)
-            draw_right_to_left_text(p, document_number, 350, y_offset)
+            # رسم الجدول والحصول على ارتفاعه
+            table_height = create_table(table_data, headers, p, 80, y_offset - 40, col_widths)
 
-            y_offset -= 20  # الانتقال للسطر التالي
+            # تعديل موضع y_offset بناءً على ارتفاع الجدول
+            y_offset -= (table_height + 60)  # إضافة مسافة بين الجداول
 
-            draw_right_to_left_text(p, f"اسم المسلم:", 550, y_offset)
-            draw_right_to_left_text(p, recipient_name, 350, y_offset)
+            # إذا كان y_offset أقل من حد معين، أضف صفحة جديدة
+            if y_offset < 50:  # 50 هي المسافة الآمنة
+                p.showPage()  # الانتقال إلى صفحة جديدة
+                p.setFont('Arial', 12)  # إعادة تعيين الخط في الصفحة الجديدة
+                title_y_offset = 800
+                date_y_offset = 780
+                y_offset = 600  # إعادة تعيين موضع y_offset في الصفحة الجديدة
 
-            y_offset -= 20  # الانتقال للسطر التالي
+                # إعادة عرض العنوان في الصفحة الجديدة
+                p.drawRightString(550, title_y_offset, reshape_arabic_text(title_text))
+                p.drawRightString(550, date_y_offset, reshape_arabic_text(date_text))
 
-            draw_right_to_left_text(p, f"المخزن:", 550, y_offset)
-            draw_right_to_left_text(p, warehouse_name, 350, y_offset)
+                # إضافة مسافة أعلى الجدول في الصفحة الجديدة
+                y_offset -= 20  # مسافة إضافية فوق الجدول
 
-            y_offset -= 20  # الانتقال للسطر التالي
-            draw_right_to_left_text(p, f"الصنف: {item_name}", 350, 550 )
-
-            # draw_right_to_left_text(p, f"الصنف:", 550, y_offset)
-            # draw_right_to_left_text(p, item_name, 350, y_offset)
-
-            y_offset -= 20  # الانتقال للسطر التالي
-
-            draw_right_to_left_text(p, f"الكمية المرسلة:", 550, y_offset)
-            draw_right_to_left_text(p, quantity_dispatched, 350, y_offset)
-
-            y_offset -= 40  # مسافة بين كل عملية
-
-
+    # إنهاء الصفحة وحفظ الملف
     p.showPage()
     p.save()
 
     pdf = buffer.getvalue()
     buffer.close()
     return pdf
+
+
+
+
+
+
+
+
+
+
+

@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Enventory',
     'Transactions',
-    'Users',
+    'Accounts',
     'Reports',
 ]
 
-
+AUTH_USER_MODEL = 'Accounts.CustomUser'
 
 
 
@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'Enventory_Manag.wsgi.application'
 DATABASES = {
      "default": {
          "ENGINE": "django.db.backends.mysql",
-         "NAME": "Enventory_Manags",
+         "NAME": "Warehouses_Managements",
          "USER": "root",
          "PASSWORD": "",
          "HOST": "127.0.0.1",
@@ -145,4 +145,20 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'Moath.itpro@gmail.com'
+EMAIL_HOST_PASSWORD = 'Moath770937324$'
+DEFAULT_FROM_EMAIL = 'noreply@example.com'
+LOGIN_REDIRECT_URL = 'login_redirect'
+
+
+
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = '/login/'  # إعادة التوجيه إلى صفحة تسجيل الدخول بعد تسجيل الخروج
+

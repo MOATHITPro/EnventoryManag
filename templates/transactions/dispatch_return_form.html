@@ -1,10 +1,6 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إرجاع الصادر</title>
+{% block content %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* تنسيق الرسائل */
@@ -26,10 +22,9 @@
             margin-bottom: 10px;
         }
     </style>
-</head>
-<body>
+
     <h1>نموذج إرجاع الوارد</h1>
-    
+
     <!-- قسم لعرض الرسائل -->
     <div id="message-container"></div>
 
@@ -53,7 +48,6 @@
 
                 if (dispatchId) {
                     $.ajax({
-
                         url: '/transactions/dispatch/' + dispatchId + '/details/',  // تأكد من استخدام الرابط الصحيح
                         method: 'GET',
                         success: function(data) {
@@ -79,5 +73,4 @@
             });
         });
     </script>
-</body>
-</html>
+{% endblock content %}

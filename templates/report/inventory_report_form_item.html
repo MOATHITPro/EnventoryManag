@@ -1,36 +1,10 @@
+{% extends 'base.html' %}
 
-{% load static %}  <!-- تحميل مكتبة static -->
-
-
-<!-- inventory_report_form.html -->
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <title>تقرير حركة المخزون</title>
-     <style>
-       
-        @font-face {
-            font-family: 'DejaVuSans';
-            src: url('{{ STATIC_URL }}fonts/DejaVuSans.ttf') format('truetype');
-        }
-        
-        body {
-            font-family: 'DejaVu Sans', sans-serif;
-            direction: rtl;
-            text-align: right;
-        }
-    </style> 
-        
-</head>
-<body>
+{% block content %}
     <h1>تقرير حركة المخزون حسب صنف محدد</h1>
 
     <form method="POST" >
         {% csrf_token %}
-        
-        
-        
 
         <label for="start_date">Start Date:</label>
         <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required>
@@ -46,12 +20,12 @@
             </option>
             {% endfor %}
         </select>
-        
+
         <button type="submit" name="generate_report">Generate Report</button>
         <button type="submit" name="generate_pdf_item">Generate PDF</button>
         <button type="submit" name="generate_excel_item">Generate Excel</button>
     </form>
-    
+
     {% if report_data %}
     <h2>التقرير من {{ start_date }} إلى {{ end_date }}</h2>
 
@@ -63,7 +37,6 @@
             <th>المورد</th>
             <th>الكمية المستوردة</th>
             <th>المخزن </th>
-
         </tr>
         {% for row in report_data.Receiving %}
         <tr>
@@ -72,7 +45,6 @@
             <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.imported_quantity }}</td>
             <td>{{ row.warehouse.name}}</td>
-
         </tr>
         {% endfor %}
     </table>
@@ -85,7 +57,6 @@
             <th>المستفيد</th>
             <th>الكمية المصروفة</th>
             <th>المخزن </th>
-
         </tr>
         {% for row in report_data.Dispatch %}
         <tr>
@@ -94,7 +65,6 @@
             <td>{{ row.beneficiary.full_name }}</td>
             <td>{{ row.quantity_dispatched }}</td>
             <td>{{ row.warehouse.name}}</td>
-
         </tr>
         {% endfor %}
     </table>
@@ -107,7 +77,6 @@
             <th>المورد</th>
             <th>الكمية المرتجعة</th>
             <th>المخزن </th>
-
         </tr>
         {% for row in report_data.Return %}
         <tr>
@@ -116,7 +85,6 @@
             <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.returned_quantity }}</td>
             <td>{{ row.warehouse.name}}</td>
-
         </tr>
         {% endfor %}
     </table>
@@ -139,5 +107,4 @@
         {% endfor %}
     </table>
     {% endif %}
-</body>
-</html>
+{% endblock content %}

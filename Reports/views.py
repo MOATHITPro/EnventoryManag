@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime
 from Transactions.models import Receiving, Dispatch, ReceivingReturn, DamageOperation
-from Enventory.models import Warehouse,Item,StockItem ,Beneficiary
+from Enventory.models import Warehouse,Item,StockItem ,Beneficiary,Supplier
 
 from .utils.pdf_w_movement_report import generate_pdf  # استيراد دالة PDF
 from .utils.excel_w_movement_report import generate_excel
@@ -18,6 +18,8 @@ from .utils.excel_warehouse_status_report import generate_excel_warehouse_status
 from .utils.generate_pdf_report_beneficiary import generate_pdf_report_beneficiary  # تأكد من إنشاء هذه الدالة
 from .utils.generate_excel_report_beneficiary import generate_excel_report_beneficiary  # تأكد من إنشاء هذه الدالة
 
+from .utils.generate_pdf_report_supplier import generate_pdf_report_supplier  # تأكد من إنشاء هذه الدالة
+from .utils.generate_excel_report_supplier import generate_excel_report_supplier  # تأكد من إنشاء هذه الدالة
 from django.contrib import messages
 
 
@@ -287,4 +289,61 @@ def inventory_report_beneficiary(request):
         'start_date': start_date,
         'end_date': end_date,
         'beneficiary_id': beneficiary_id,
+    })
+
+
+
+
+
+
+
+
+
+ 
+def inventory_report_supplier(request):
+    report_data = None
+    start_date = request.POST.get('start_date', None)
+    end_date = request.POST.get('end_date', None)
+    supplier_id = request.POST.get('supplier', None)
+
+    if request.method == "POST" and (start_date and end_date and supplier_id):
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            pass
+
+        # تصفية عمليات الصادر بناءً على المستفيد والفترة الزمنية
+        receiving_data = Receiving.objects.filter(
+            receiving_date__range=[start_date, end_date],
+            supplier_id=supplier_id
+        )
+
+        # إعداد البيانات التي سيتم عرضها في التقرير
+        report_data = {
+            'Receiving': receiving_data,
+        }
+
+        # توليد تقرير PDF
+        if 'generate_pdf_report_supplier' in request.POST:
+            pdf = generate_pdf_report_supplier(report_data, supplier_id, start_date, end_date)
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="Receiving_report.pdf"'
+            response.write(pdf)
+            return response
+        # توليد تقرير Excel
+        elif 'generate_excel_report_supplier' in request.POST:
+            output = generate_excel_report_supplier(report_data)
+            response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="Receiving_report.xlsx"'
+            return response
+
+    # جلب المستفيدين لعرضهم في النموذج
+    suppliers = Supplier.objects.all()
+    return render(request, 'report/inventory_report_form_supplier.html', {
+        'suppliers': suppliers,
+        'report_data': report_data,
+        'start_date': start_date,
+        'end_date': end_date,
+        'supplier_id': supplier_id,
     })

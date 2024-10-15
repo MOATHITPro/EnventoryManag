@@ -1,29 +1,11 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <title>تقرير حالة الصنف في المخازن</title>
-    <style>
-        @font-face {
-            font-family: 'DejaVuSans';
-            src: url('{% static "fonts/DejaVuSans.ttf" %}') format('truetype');
-        }
-        
-        body {
-            font-family: 'DejaVu Sans', sans-serif;
-            direction: rtl;
-            text-align: right;
-        }
-    </style>
-</head>
-<body>
+{% block content %}
     <h1>تقرير حالة الصنف في المخازن</h1>
 
     <form method="POST">
         {% csrf_token %}
-        
+
         <label for="item">اختر الصنف:</label>
         <select name="item" id="item">
             {% for item in items %}
@@ -32,12 +14,12 @@
             </option>
             {% endfor %}
         </select>
-        
+
         <button type="submit" name="generate_report">عرض التقرير</button>
         <button type="submit" name="generate_pdf_item_status">توليد PDF</button>
         <button type="submit" name="generate_excel_item_status">توليد Excel</button>
     </form>
-    
+
     {% if report_data %}
     <h2>تقرير حالة الصنف: {{ report_data.Item.name }}</h2>
 
@@ -54,11 +36,10 @@
             <tr>
                 <td>{{ stock_item.warehouse.name }}</td>
                 <td>{{ stock_item.unit }}</td>
-                <td>{{ stock_item.current_quantity }}</td>
+                <td>{{ stock_item.item.quantity_in_stock }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% endif %}
-</body>
-</html>
+{% endblock content %}

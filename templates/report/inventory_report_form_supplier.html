@@ -1,0 +1,64 @@
+{% extends 'base.html' %}  <!-- نمدد القالب الأساسي 'base.html' -->
+
+{% load static %}  <!-- تحميل ملفات الستاتيك مثل الخطوط -->
+
+{% block content %}  <!-- بداية قسم المحتوى الذي سيتم استبداله في 'base.html' -->
+    <h1>تقرير عمليات الشحن للمورد المحدد</h1>  <!-- عنوان التقرير -->
+
+    <form method="POST">  <!-- بداية نموذج الإدخال -->
+        {% csrf_token %}  <!-- توكن حماية CSRF لضمان أمان النموذج -->
+        
+        <label for="start_date">تاريخ البداية:</label>  <!-- تسمية حقل تاريخ البداية -->
+        <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required>  <!-- حقل إدخال تاريخ البداية -->
+
+        <label for="end_date">تاريخ النهاية:</label>  <!-- تسمية حقل تاريخ النهاية -->
+        <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" required>  <!-- حقل إدخال تاريخ النهاية -->
+
+        <label for="supplier">المورد:</label>  <!-- تسمية حقل المستفيد -->
+        <select name="supplier" id="supplier" required>  <!-- قائمة منسدلة للمستفيدين -->
+            {% for supplier in suppliers %}  <!-- حلقة لتكرار قائمة المستفيدين -->
+                <option value="{{ supplier.id }}" {% if supplier.id == supplier_id %}selected{% endif %}>  <!-- تحديد المستفيد المحدد -->
+                    {{ supplier.full_name }}  <!-- عرض اسم المستفيد الكامل -->
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- أزرار لتوليد التقارير -->
+        <button type="submit" name="generate_report">توليد التقرير</button>  <!-- زر لتوليد التقرير -->
+        <button type="submit" name="generate_pdf_report_supplier">توليد PDF</button>  <!-- زر لتوليد تقرير بصيغة PDF -->
+        <button type="submit" name="generate_excel_report_supplier">توليد Excel</button>  <!-- زر لتوليد تقرير بصيغة Excel -->
+    </form>
+
+    {% if report_data %}  <!-- تحقق إذا كانت هناك بيانات للتقرير -->
+    <h2>التقرير لعمليات الشحن للمورد {{ supplier.full_name }} من {{ start_date }} إلى {{ end_date }}</h2>  <!-- عنوان التقرير مع تفاصيل المستفيد وتواريخ العمليات -->
+
+    <h3>عمليات الوارد الى المخزن</h3>  <!-- عنوان القسم الخاص بعمليات الصادر -->
+    <table border="1">  <!-- جدول لعرض البيانات -->
+        <tr>
+            <th>تاريخ الوارد</th>  <!-- رأس الجدول لتاريخ الصادر -->
+            <th>رقم الوثيقة</th>  <!-- رأس الجدول لرقم الوثيقة -->
+            <th>اسم المورد</th>  <!-- رأس الجدول لاسم المستفيد -->
+            <th>الكمية المصروفة</th>  <!-- رأس الجدول للكمية المصروفة -->
+            <th>اسم المسلم</th>  <!-- رأس الجدول لاسم الموزع -->
+            <th>اسم المستلم</th>  <!-- رأس الجدول لاسم المستلم -->
+            <th>الصنف</th>  <!-- رأس الجدول للصنف -->
+            <th>المخزن</th>  <!-- رأس الجدول للمخزن -->
+        </tr>
+        {% for receiving in report_data.Receiving %}  <!-- حلقة لتكرار بيانات الصادر -->
+        <tr>
+            <td>{{ receiving.receiving_date }}</td>  <!-- تاريخ الوارد -->
+            <td>{{ receiving.document_number }}</td>  <!-- رقم الوثيقة -->
+            <td>{{ receiving.supplier.full_name }}</td>  <!-- اسم المستفيد -->
+            <td>{{ receiving.imported_quantity }}</td>  <!-- الكمية المصروفة -->
+            <td>{{ receiving.delivered_by_name }}</td>  <!-- اسم الموزع -->
+            <td>{{ receiving.received_by_name }}</td>  <!-- اسم المستلم -->
+            <td>{{ receiving.item.name }}</td>  <!-- اسم الصنف -->
+            <td>{{ receiving.warehouse.name }}</td>  <!-- اسم المخزن -->
+        </tr>
+        {% endfor %}
+        
+    </table>
+    {% else %}  <!-- في حال عدم وجود بيانات -->
+    <p>لا توجد بيانات للتقرير.</p>  <!-- رسالة تفيد بعدم وجود بيانات -->
+    {% endif %}
+{% endblock content %}  <!-- نهاية قسم المحتوى -->

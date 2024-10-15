@@ -1,45 +1,6 @@
+{% extends 'base.html' %}
 
-{% load static %}  <!-- تحميل مكتبة static -->
-
-
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-   
-    <meta charset="UTF-8">
-    <title>تقرير المخزون</title>
-    <style>
-       
-        @font-face {
-            font-family: 'DejaVuSans';
-            src: url('{{ STATIC_URL }}fonts/DejaVuSans.ttf') format('truetype');
-        }
-        
-        body {
-            font-family: 'DejaVu Sans', sans-serif;
-            direction: rtl;
-            text-align: right;
-        }
-        
-      
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: right;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <pdf:language name="arabic"/>
-
+{% block content %}
     <h1>تقرير المخزون</h1>
     <h2>التقرير من {{ start_date }} إلى {{ end_date }}</h2>
 
@@ -50,7 +11,7 @@
             <th>رقم الوثيقة</th>
             <th>المورد</th>
             <th>الكمية المستوردة</th>
-            <th>الصنف </th>
+            <th>الصنف</th>
         </tr>
         {% for row in report_data.Receiving %}
         <tr>
@@ -58,8 +19,7 @@
             <td>{{ row.document_number }}</td>
             <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.imported_quantity }}</td>
-            <td>{{ row.item.name}}</td>
-
+            <td>{{ row.item.name }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -71,8 +31,7 @@
             <th>رقم الوثيقة</th>
             <th>المستفيد</th>
             <th>الكمية المصروفة</th>
-            <th>الصنف </th>
-
+            <th>الصنف</th>
         </tr>
         {% for row in report_data.Dispatch %}
         <tr>
@@ -80,8 +39,7 @@
             <td>{{ row.document_number }}</td>
             <td>{{ row.beneficiary.full_name }}</td>
             <td>{{ row.quantity_dispatched }}</td>
-            <td>{{ row.item.name}}</td>
-
+            <td>{{ row.item.name }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -93,8 +51,7 @@
             <th>رقم الوثيقة</th>
             <th>المورد</th>
             <th>الكمية المرتجعة</th>
-            <th>الصنف </th>
-
+            <th>الصنف</th>
         </tr>
         {% for row in report_data.Return %}
         <tr>
@@ -102,8 +59,7 @@
             <td>{{ row.document_number }}</td>
             <td>{{ row.supplier.full_name }}</td>
             <td>{{ row.returned_quantity }}</td>
-            <td>{{ row.item.name}}</td>
-
+            <td>{{ row.item.name }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -122,9 +78,7 @@
             <td>{{ row.document_number }}</td>
             <td>{{ row.item.name }}</td>
             <td>{{ row.damaged_quantity }}</td>
-
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+{% endblock content %}

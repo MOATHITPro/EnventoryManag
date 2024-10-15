@@ -64,7 +64,7 @@ class Dispatch(models.Model):
 
 
     # حقول العناصر المستوردة
-    item = models.ForeignKey('Enventory.Item', on_delete=models.CASCADE)  # استخدم ID العنصر الموجود
+    item = models.ForeignKey('Enventory.Item', on_delete=models.CASCADE, default=1)  # استخدم ID العنصر الموجود
     quantity_dispatched = models.PositiveIntegerField(default=0)
     transfer_date = models.DateField(default=timezone.now)  # حقل غير قابل لـ null بقيمة افتراضية
     actual_transfer_date = models.DateField(default=timezone.now)  # تاريخ التحويل الفعلي

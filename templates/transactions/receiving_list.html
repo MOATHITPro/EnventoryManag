@@ -1,10 +1,7 @@
 <!-- templates/receiving_list.html -->
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قائمة الاستلامات</title>
+{% extends 'base.html' %}
+
+{% block content %}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -57,8 +54,7 @@
             background-color: #45a049;
         }
     </style>
-</head>
-<body>
+
     <h1>قائمة الاستلامات</h1>
     <table>
         <thead>
@@ -90,5 +86,4 @@
     <a href="{% url 'add_receiving' %}">
         <button>انتقل إلى صفحة أخرى</button>
     </a>
-</body>
-</html>
+{% endblock content %}

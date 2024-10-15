@@ -1,108 +1,50 @@
-
-<!DOCTYPE html>
-
-<html lang="ar">
-
-<head>
-
-<!-- Basic Page Info -->
-
-<meta charset="utf-8" />
-
-<title>DeskApp - Bootstrap Admin Moath Abbas</title>
-
-{% include "partials/header.html" %}
-
-{% load static %}
-
-<link rel="stylesheet" href="{% static 'styles.css' %}">
-
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Mobile Specific Metas -->
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-<!-- CSS -->
-<link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/core.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/icon-font.min.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/dataTables.bootstrap4.min.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/datatables/css/responsive.bootstrap4.min.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'vendors/styles/style.css' %}" />
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-
-<!-- Google Tag Manager -->
-
-<!-- End Google Tag Manager -->
-</head>
-
-<body class="hold-transition sidebar-mini layout-fixed">
-
-{% include 'partials/navbar.html' %}
-
-{% include 'partials/sidebar.html' %}
-
-<div class="wrapper">
-
-<div class="content-wrapper">
-
-<div class="main-container">
+{% extends 'base.html' %}
 
 {% block content %}
-
-    <div class="xs-pd-20-10 pd-ltr-20">
-        <div class="card-box pb-10">
-            <div class="h5 pd-20 mb-0">Recent Patient</div>
-            <table class="data-table table nowrap text-center">
-                <thead>
-                    <tr>
-                        <th class="table-plus">Gender</th>
-                        <th>Weight</th>
-                        <th class="datatable-nosort ">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-               
-                    <h1>قائمة المستودعات</h1>
-                    <tr>
-                        {% for beneficiary in beneficiarys %}
-
-                        <td>{{ beneficiary.full_name }}</td>
-                        <td>{{ beneficiary.phone_number}}</td>
-                       
-                        <td>
-                            <div class="table-actions justify-content-center">
-                                <a href="#" data-color="#265ed7"><i class="icon-copy dw dw-edit2"></i></a>
-                                <a href="#" data-color="#e95959"><i class="icon-copy dw dw-delete-3"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-
-                </tbody>
-            </table>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStockItemModal">
-                أضف صنف مخزن
-            </button>
+<div class="wrapper">
+    <div class="content-wrapper">
+        <div class="main-container">
+            <div class="xs-pd-20-10 pd-ltr-20">
+                <div class="card-box pb-10">
+                    <div class="h5 pd-20 mb-0">قائمة المستودعات</div>
+                    <table class="data-table table nowrap text-center">
+                        <thead>
+                            <tr>
+                                <th class="table-plus">المورد</th>
+                                <th>رقم الهاتف</th>
+                                <th class="datatable-nosort">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for beneficiary in beneficiarys %}
+                            <tr>
+                                <td>{{ beneficiary.full_name }}</td>
+                                <td>{{ beneficiary.phone_number }}</td>
+                                <td>
+                                    <div class="table-actions justify-content-center">
+                                        <a href="#" data-color="#265ed7"><i class="icon-copy dw dw-edit2"></i></a>
+                                        <a href="#" data-color="#e95959"><i class="icon-copy dw dw-delete-3"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStockItemModal">
+                        أضف صنف مخزن
+                    </button>
+                </div>
+            </div>
         </div>
-
     </div>
-    {% endblock content %}
-
 </div>
-</div> </div>
-
 
 <!-- Modal for adding an item -->
 <div class="modal fade" id="addStockItemModal" tabindex="-1" aria-labelledby="addStockItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addStockItemModalLabel">إضافة اصناف المخزن</h5>
+                <h5 class="modal-title" id="addStockItemModalLabel">إضافة أصناف المخزن</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -111,15 +53,13 @@
                 <form method="POST" action="{% url 'add_beneficiary' %}">
                     {% csrf_token %}
                     <div class="form-group">
-                       
                         <label for="id_name">الصنف</label>
                         <input type="text" class="form-control" id="id_name" name="full_name" required>
                     </div>
                     <div class="form-group">
-                        <label for="id_name"> المخزن</label>
-                        <input type="text" class="form-control" id="id_name" name="phone_number" required>
+                        <label for="id_phone">المخزن</label>
+                        <input type="text" class="form-control" id="id_phone" name="phone_number" required>
                     </div>
-
                     <button type="submit" class="btn btn-primary">إضافة صنف مخزن</button>
                 </form>
             </div>
@@ -127,30 +67,4 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-{% include "partials/footer.html" %}
-<!-- js -->
-<script src="{% static 'vendors/scripts/core.js' %}"></script>
-<script src="{% static 'vendors/scripts/script.min.js' %}"></script>
-<script src="{% static 'vendors/scripts/process.js' %}"></script>
-<script src="{% static 'vendors/scripts/layout-settings.js' %}"></script>
-<script src="{% static 'src/plugins/apexcharts/apexcharts.min.js' %}"></script>
-<script src="{% static 'src/plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'src/plugins/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'src/plugins/datatables/js/dataTables.responsive.min.js' %}"></script>
-<script src="{% static 'src/plugins/datatables/js/responsive.bootstrap4.min.js' %}"></script>
-<script src="{% static 'vendors/scripts/dashboard3.js' %}"></script>
-<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-<!-- JavaScript لإضافة صف جديد إلى الجدول -->
-
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0" style="display: none; visibility: hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
-</body>
-
-</html>
+{% endblock content %}

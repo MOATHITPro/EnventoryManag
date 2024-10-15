@@ -1,96 +1,207 @@
-{% comment %} 
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="ar">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل حساب جديد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* تصميم رئيسي للجسم */
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-  <title>Register</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        /* تصميم صندوق النموذج */
+        .form-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: right; /* توجيه النص إلى اليمين */
+        }
 
-  <!-- Bootstrap CSS v5.2.1 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+        /* تصميم عنوان النموذج */
+        .form-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-align: center; /* محاذاة العنوان إلى الوسط */
+        }
+
+        /* تصميم إدخالات النموذج */
+        .registration-form {
+            position: relative;
+        }
+
+        .registration-form .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .registration-form input[type="text"],
+        .registration-form input[type="password"],
+        .registration-form select {
+            width: 100%;
+            padding: 12px 40px; /* إضافة padding الجانبي */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            text-align: right; /* توجيه نص الحقول إلى اليمين */
+        }
+
+        .registration-form input:focus,
+        .registration-form select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* تصميم أيقونات الحقول */
+        .input-group .icon {
+            position: absolute;
+            left: 12px; /* موضع الأيقونة */
+            top: 12px; /* تعديل هذا لضبط الأيقونة عموديًا */
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        /* تصميم زر الإرسال */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* تصميم رسائل الخطأ */
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* تحسين استجابة النموذج */
+        @media (max-width: 500px) {
+            .form-container {
+                padding: 20px;
+            }
+        }
+
+        /* تصميم label */
+        .label-rtl {
+            text-align: right; /* توجيه النص إلى اليمين */
+            display: block;    /* عرض label في سطر جديد */
+            margin-bottom: 5px; /* إضافة مسافة أسفل label */
+        }
+
+        /* تصميم النص الخاص بالروابط */
+        .black-text {
+            color: black; /* تغيير لون النص إلى الأسود */
+            text-align: center; /* توسيط النص */
+            margin-top: 20px; /* إضافة مسافة من الأعلى */
+        }
+
+        .register-link {
+            color: #3498db; /* اللون الافتراضي للرابط */
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
 
-  <section class="vh-100" >
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-lg-12 col-xl-11">
-          <div class="card text-black" style="border-radius: 25px;  background-color: #92C8E0;">
-            <div class="card-body p-md-2">
-              <div class="row justify-content-center">
-              <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-3 mt-3">Sign up</p>
-                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+    <div class="form-container">
+        <h2 class="form-title">تسجيل حساب جديد</h2>
+        <form method="post" class="registration-form">
+            {% csrf_token %}
 
-                  
-
-                  <form class="mx-1 mx-md-4" action="add.php" method="post">
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="form3Example1c"><i class="bi bi-person-circle"></i> Your Name</label>
-                        <input type="text" id="form3Example1c" class="form-control form-control-lg py-2" name="name" autocomplete="off" placeholder="enter your name" style="border-radius:25px ;" />
-
-                      </div>
-                    </div>
-
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="form3Example3c"><i class="bi bi-envelope-at-fill"></i> Your Email</label>
-                        <input type="email" id="form3Example3c" class="form-control form-control-lg py-2" name="email" autocomplete="off" placeholder="enter your username" style="border-radius:25px ;" />
-
-                      </div>
-                    </div>
-
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="form3Example4c"><i class="bi bi-chat-left-dots-fill"></i> Password</label>
-                        <input type="password" id="form3Example4c" class="form-control form-control-lg py-2" name="password" autocomplete="off" placeholder="enter your password" style="border-radius:25px ;" />
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                      <input type="submit" value="Register" name="register" class="btn btn-warning btn-lg text-light my-2 py-2" style="width:100%; border-radius:30px; font-weight:600; background-color:blue;" />
-                    </div>
-
-                  </form>
-                  <p align="center">i have already account <a href="login.php" class="" style="font-weight:600; text-decoration:none;  color:white;">Login</a></p>
+            <!-- حقل الاسم الكامل -->
+            <div class="form-group">
+                <label class="label-rtl">{{ form.full_name.label }}</label>
+                <div class="input-group">
+                    <i class="fas fa-user icon"></i>
+                    {{ form.full_name }}
                 </div>
-                <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-                  <img src="img/signup.png" class="img-fluid" alt="Sample image" height="600px" width="600px">
-
-                </div>
-              </div>
+                {% if form.full_name.errors %}
+                    <div class="error">{{ form.full_name.errors }}</div>
+                {% endif %}
             </div>
-          </div>
-        </div>
-      </div>
+
+            <!-- حقل اسم المستخدم -->
+            <div class="form-group">
+                <label class="label-rtl">{{ form.username.label }}</label>
+                <div class="input-group">
+                    <i class="fas fa-user-circle icon"></i>
+                    {{ form.username }}
+                </div>
+                {% if form.username.errors %}
+                    <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- حقل كلمة المرور -->
+            <div class="form-group">
+                <label class="label-rtl">{{ form.password1.label }}</label>
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    {{ form.password1 }}
+                </div>
+                {% if form.password1.errors %}
+                    <div class="error">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- حقل تأكيد كلمة المرور -->
+            <div class="form-group">
+                <label class="label-rtl">{{ form.password2.label }}</label>
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    {{ form.password2 }}
+                </div>
+                {% if form.password2.errors %}
+                    <div class="error">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- نوع المستخدم -->
+            <div class="form-group">
+                <label class="label-rtl">{{ form.user_type.label }}</label>
+                <div class="input-group">
+                    <i class="fas fa-user-tag icon"></i>
+                    {{ form.user_type }}
+                </div>
+                {% if form.user_type.errors %}
+                    <div class="error">{{ form.user_type.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="submit-btn">تسجيل</button>
+        </form>
+        <p class="black-text">لديك حساب؟ <a href="{% url 'login' %}" class="register-link">تسجيل الدخول</a></p>
     </div>
-  </section>
 
-  <!-- Bootstrap JavaScript Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-  </script>
 </body>
-
 </html>
-
-
- {% endcomment %}
-
- <h2>تسجيل حساب جديد</h2>
- <form method="post">
-     {% csrf_token %}
-     {{ form.as_p }}
-     <button type="submit">تسجيل</button>
- </form>
- 

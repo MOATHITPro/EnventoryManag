@@ -11,7 +11,8 @@ class WarehouseForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['name', 'quantity_in_stock']
+      #  fields = ['name', 'quantity_in_stock']
+        fields = ['name']
 
     
 

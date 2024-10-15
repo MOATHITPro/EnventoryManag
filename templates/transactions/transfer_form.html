@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehouse Transfer</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <h1>Create Warehouse Transfer</h1>
 
     <form method="post" enctype="multipart/form-data">
@@ -19,5 +14,4 @@
         
         <button type="submit">Submit Transfer</button>
     </form>
-</body>
-</html>
+{% endblock content %}

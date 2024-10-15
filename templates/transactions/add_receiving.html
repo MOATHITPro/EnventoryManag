@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إضافة عملية استلام</title>
+{% extends 'base.html' %}
+
+{% block content %}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,14 +37,11 @@
             background-color: #45a049;
         }
     </style>
-</head>
-<body>
+
     <h1>إضافة عملية استلام</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">إضافة</button>
     </form>
-</body>
-</html>
-
+{% endblock content %}

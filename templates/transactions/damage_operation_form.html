@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Damage Operation</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <h2>Create New Damage Operation</h2>
     
     <form method="post" enctype="multipart/form-data">
@@ -14,5 +9,4 @@
 
         <button type="submit">Submit</button>
     </form>
-</body>
-</html>
+{% endblock content %}

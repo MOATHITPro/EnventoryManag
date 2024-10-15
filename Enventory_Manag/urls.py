@@ -17,21 +17,46 @@ Including another URLconf
 
 
 
-""
+from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path,include
 from .import home
+from django.contrib.auth import views as auth_views
+
+# urlpatterns = [
+
+#     path('admin/', admin.site.urls),
+#     path('',home.index,name='index'),
+#     path('', include("Enventory.urls")),
+#     path('accounts/', include ('Accounts.urls')),
+#     path('transactions/', include('Transactions.urls')),  # تأكد من تضمين URLs التطبيق
+#     path('reports/', include('Reports.urls')),  # تأكد من تضمين URLs التطبيق
+
+# ]
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home.index,name='index'),
+    
+    # توجيه المستخدمين غير المسجلين الدخول إلى صفحة تسجيل الدخول
+    path('', lambda request: redirect('login') if not request.user.is_authenticated else redirect('index'), name='home'),
+    
+    # الصفحة الرئيسية
+    path('', home.index, name='index'),
+
+    # تضمين التطبيقات الأخرى
     path('', include("Enventory.urls")),
-    path('Users/', include ('Users.urls')),
-    path('transactions/', include('Transactions.urls')),  # تأكد من تضمين URLs التطبيق
-    path('reports/', include('Reports.urls')),  # تأكد من تضمين URLs التطبيق
+    path('accounts/', include('Accounts.urls')),
+    path('transactions/', include('Transactions.urls')),
+    path('reports/', include('Reports.urls')),
+
+    # صفحة تسجيل الدخول
+    path('login/', auth_views.LoginView.as_view(), name='login'),
 
 ]
+
 
 
 
