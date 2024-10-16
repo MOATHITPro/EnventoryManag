@@ -52,7 +52,7 @@
             <td>{{ receiving.imported_quantity }}</td>  <!-- الكمية المصروفة -->
             <td>{{ receiving.delivered_by_name }}</td>  <!-- اسم الموزع -->
             <td>{{ receiving.received_by_name }}</td>  <!-- اسم المستلم -->
-            <td>{{ receiving.item.name }}</td>  <!-- اسم الصنف -->
+            <td>{{ receiving.stock_item.item.name }}</td>  <!-- اسم الصنف -->
             <td>{{ receiving.warehouse.name }}</td>  <!-- اسم المخزن -->
         </tr>
         {% endfor %}

@@ -37,7 +37,7 @@ def generate_excel(report_data):
             "نوع العملية": "Damage",
             "التاريخ": row.damage_date,
             "رقم الوثيقة": row.document_number,
-            "المورد أو المستفيد": row.item.name if row.item else "N/A",
+            "الصنف": row.stock_item.item.name if row.stock_item and row.stock_item.item else "N/A",  # الصنف من StockItem
             "الكمية": row.damaged_quantity
         })
 

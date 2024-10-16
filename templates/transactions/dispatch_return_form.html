@@ -23,7 +23,7 @@
         }
     </style>
 
-    <h1>نموذج إرجاع الوارد</h1>
+    <h1>نموذج إرجاع صادر</h1>
 
     <!-- قسم لعرض الرسائل -->
     <div id="message-container"></div>
@@ -54,7 +54,7 @@
                             $('#id_dispatch_date').val(data.dispatch_date);
                             $('#id_warehouse').val(data.warehouse);
                             $('#id_beneficiary').val(data.beneficiary);
-                            $('#id_item').val(data.item);
+                            $('#id_item').val(data.stock_item);
                             $('#message-container').html('<div class="success">تم جلب التفاصيل بنجاح.</div>'); // رسالة نجاح
                         },
                         error: function(xhr, status, error) {

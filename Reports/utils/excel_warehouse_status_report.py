@@ -1,8 +1,11 @@
 import openpyxl
 from openpyxl.styles import Font
 from io import BytesIO
+import openpyxl
+from openpyxl.styles import Font
+from io import BytesIO
 
-def generate_excel_warehouse_status (report_data):
+def generate_excel_warehouse_status(report_data):
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "تقرير حالة المخزن"
@@ -23,10 +26,10 @@ def generate_excel_warehouse_status (report_data):
     ws['B5'].font = Font(bold=True)
 
     # بيانات الجدول
-    row = 6
-    for item in report_data['Items']:
-        ws.cell(row=row, column=1, value=item.name)
-        ws.cell(row=row, column=2, value=item.quantity_in_stock)
+    row=5
+    for stock_item in report_data['StockItems']:
+        ws.cell(row=row, column=1, value=stock_item.item.name)  # اسم الصنف
+        ws.cell(row=row, column=2, value=stock_item.current_quantity)  # الكميات المتوفرة
         row += 1
 
     # تعديل عرض الأعمدة

@@ -54,24 +54,26 @@
         }
     </style>
 
-    <h1>قائمة الاستلامات</h1>
+    <h1>قائمة التسليم</h1>
     <table>
         <thead>
             <tr>
                 <th>رقم المستند</th>
                 <th>تاريخ الاستلام</th>
-                <th>المورد</th>
-                <th>الكمية المستوردة</th>
+                <th>المستفيد</th>
+                <th>الكمية الصادرة</th>
+                <th>المخزن </th>
                 <th>ملاحظات</th>
             </tr>
         </thead>
         <tbody>
             {% for Dispatch in dispatchs %}
             <tr>
+                <td>{{ Dispatch.document_number }}</td>
                 <td>{{ Dispatch.dispatch_date }}</td>
-                <td>{{ Dispatch.deliverer_name }}</td>
-                <td>{{ Dispatch.deliverer_id }}</td>
+                <td>{{ Dispatch.beneficiary }}</td>
                 <td>{{ Dispatch.quantity_dispatched }}</td>
+                <td>{{ Dispatch.warehouse }}</td>
                 <td>{{ Dispatch.notes }}</td>
             </tr>
             {% empty %}
@@ -83,6 +85,6 @@
     </table>
     
     <a href="{% url 'create_dispatch' %}">
-        <button>انتقل إلى صفحة أخرى</button>
+        <button>اضافة صادر جديد</button>
     </a>
 {% endblock content %}

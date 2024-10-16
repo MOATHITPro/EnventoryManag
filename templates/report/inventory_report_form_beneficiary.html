@@ -52,7 +52,7 @@
             <td>{{ dispatch.quantity_dispatched }}</td>  <!-- الكمية المصروفة -->
             <td>{{ dispatch.deliverer_name }}</td>  <!-- اسم الموزع -->
             <td>{{ dispatch.recipient_name }}</td>  <!-- اسم المستلم -->
-            <td>{{ dispatch.item.name }}</td>  <!-- اسم الصنف -->
+            <td>{{ dispatch.stock_item.item.name }}</td>  <!-- اسم الصنف -->
             <td>{{ dispatch.warehouse.name }}</td>  <!-- اسم المخزن -->
         </tr>
         {% endfor %}

@@ -33,13 +33,14 @@ def generate_excel_item(report_data):
         })
 
     for row in report_data['Damage']:
-        all_rows.append({
-            "نوع العملية": "Damage",
-            "التاريخ": row.damage_date,
-            "رقم الوثيقة": row.document_number,
-            "المورد أو المستفيد": row.item.name if row.item else "N/A",
-            "الكمية": row.damaged_quantity
-        })
+       all_rows.append({
+          "نوع العملية": "Damage",
+          "التاريخ": row.damage_date,  # تاريخ التلف
+          "رقم الوثيقة": row.document_number,  # الرقم الورقي
+          "الصنف": row.stock_item.item.name if row.stock_item and row.stock_item.item else "N/A",  # الصنف من StockItem
+          "الكمية": row.damaged_quantity  # الكمية التالفة
+    })
+
 
     df = pd.DataFrame(all_rows)
 

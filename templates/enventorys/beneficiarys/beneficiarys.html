@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<h1> قــائمة المستفيدين</h1>  <!-- عنوان التقرير -->
+
 <div class="wrapper">
     <div class="content-wrapper">
         <div class="main-container">
             <div class="xs-pd-20-10 pd-ltr-20">
                 <div class="card-box pb-10">
-                    <div class="h5 pd-20 mb-0">قائمة المستودعات</div>
                     <table class="data-table table nowrap text-center">
                         <thead>
                             <tr>
-                                <th class="table-plus">المورد</th>
+                                <th class="table-plus">المستفيد</th>
                                 <th>رقم الهاتف</th>
-                                <th class="datatable-nosort">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -20,18 +20,13 @@
                             <tr>
                                 <td>{{ beneficiary.full_name }}</td>
                                 <td>{{ beneficiary.phone_number }}</td>
-                                <td>
-                                    <div class="table-actions justify-content-center">
-                                        <a href="#" data-color="#265ed7"><i class="icon-copy dw dw-edit2"></i></a>
-                                        <a href="#" data-color="#e95959"><i class="icon-copy dw dw-delete-3"></i></a>
-                                    </div>
-                                </td>
+                                
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStockItemModal">
-                        أضف صنف مخزن
+                        أضف مستفيد
                     </button>
                 </div>
             </div>
@@ -44,7 +39,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addStockItemModalLabel">إضافة أصناف المخزن</h5>
+                <h5 class="modal-title" id="addStockItemModalLabel">إضافة مستفيد جديد</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -53,14 +48,14 @@
                 <form method="POST" action="{% url 'add_beneficiary' %}">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="id_name">الصنف</label>
+                        <label for="id_name">اسم المستفيد</label>
                         <input type="text" class="form-control" id="id_name" name="full_name" required>
                     </div>
                     <div class="form-group">
-                        <label for="id_phone">المخزن</label>
+                        <label for="id_phone">رقم الهاتف</label>
                         <input type="text" class="form-control" id="id_phone" name="phone_number" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">إضافة صنف مخزن</button>
+                    <button type="submit" class="btn btn-primary">إضافة مستفيد </button>
                 </form>
             </div>
         </div>

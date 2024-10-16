@@ -69,7 +69,11 @@ def generate_pdf_warehouse_status(report_data):
 
     # جدول الكميات في الأصناف
     headers = ['اسم الصنف', 'الكميات المتوفرة']
-    table_data = [[item.name, item.quantity_in_stock] for item in report_data['Items']]
+    table_data = [(stock_item.item, stock_item.current_quantity) for stock_item in report_data['StockItems']]
+    
+
+
+
     
     col_widths = [8 * cm, 3 * cm]
     table_height = create_table(table_data, headers, p, 80, y_offset, col_widths)

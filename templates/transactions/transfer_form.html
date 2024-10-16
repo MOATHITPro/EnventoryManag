@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Create Warehouse Transfer</h1>
+<h1>تحويل الأصناف  بين المخازن</h1>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <h2>Transfer Operation</h2>
         {{ operation_form.as_p }}
         
         <h2>Transfer Item</h2>

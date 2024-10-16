@@ -83,7 +83,7 @@ def generate_pdf_report_beneficiary(report_data, beneficiary_id, start_date, end
                     row.document_number,
                     row.recipient_name,
                     row.warehouse.name,
-                    row.item.name if row.item else 'N/A',
+                    row.stock_item.item.name if row.stock_item else 'N/A',
                     row.quantity_dispatched
                 ]
                 for row in data

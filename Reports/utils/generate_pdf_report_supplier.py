@@ -85,7 +85,7 @@ def generate_pdf_report_supplier(report_data, supplier_id, start_date, end_date)
                     row.document_number,
                     row.received_by_name,
                     row.warehouse.name,
-                    row.item.name if row.item else 'N/A',
+                    row.stock_item.item.name if row.stock_item else 'N/A',
                     row.imported_quantity
                 ]
                 for row in data

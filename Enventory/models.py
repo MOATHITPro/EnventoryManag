@@ -19,8 +19,7 @@ class Warehouse(models.Model):
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
-    quantity_in_stock = models.IntegerField(default=0)  # تأكد من وجود هذا الحقل
-    warehouse = models.ForeignKey(Warehouse, related_name='items', on_delete=models.CASCADE, default=1)  # ربط الصنف بالمخزن
+
 
     def __str__(self):
         return self.name
@@ -29,7 +28,7 @@ class StockItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     unit = models.CharField(max_length=50)
-    opening_balance = models.DecimalField(max_digits=10, decimal_places=2)
+    opening_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     current_quantity = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
@@ -38,15 +37,14 @@ class StockItem(models.Model):
 class Station(models.Model):
     station_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, default=1)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, default=1)
+    stockitem = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True)
     def __str__(self):
         return self.station_name
 
 class Supplier(models.Model):
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=50)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, default=1)
+    stockitem = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.full_name
@@ -54,7 +52,7 @@ class Supplier(models.Model):
 class Beneficiary(models.Model):
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=50)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, default=1)
+    stockitem = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.full_name

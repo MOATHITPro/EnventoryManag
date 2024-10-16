@@ -80,7 +80,7 @@ def generate_pdf_item_status(report_data):
 
     # Table headers and data
     headers = ['المخزن', 'الوحدة', 'الكميات المتوفرة']
-    table_data = [[stock.warehouse.name, stock.unit, stock.item.quantity_in_stock] for stock in report_data['StockItems']]
+    table_data = [[stock.warehouse.name, stock.unit, stock.current_quantity] for stock in report_data['StockItems']]
     
     # Table position and column widths
     y_offset = 700

@@ -8,6 +8,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
+from django.core.exceptions import ValidationError
+
+
 
 def add_receiving(request):
     if request.method == 'POST':
@@ -31,12 +34,20 @@ def receiving_list(request):
 def create_dispatch(request):
     if request.method == 'POST':
         form = DispatchForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('dispatch_list')  # أو أي وجهة أخرى بعد النجاح
+        try:
+            if form.is_valid():
+                form.save()
+                return redirect('dispatch_list')  # أو أي وجهة أخرى بعد النجاح
+        except ValidationError as e:
+            # إضافة الخطأ للنموذج
+            form.add_error(None, e)  # None يعني إضافة الخطأ بشكل عام
     else:
         form = DispatchForm()
+    
     return render(request, 'Transactions/create_dispatch.html', {'form': form})
+
+
+
 
 
 def dispatch_list(request):
@@ -70,7 +81,7 @@ def get_receiving_details(request, id):
             'warehouse': receiving.warehouse.name,
             'supplier': receiving.supplier.full_name,
             'station': receiving.station.station_name,
-            'item': receiving.item.name,
+            'stock_item': receiving.stock_item.item.name,
         }
         return JsonResponse(data)
     except Exception as e:
@@ -106,7 +117,7 @@ def get_dispatch_details(request, id):
             'dispatch_date': dispatch.dispatch_date.strftime('%Y-%m-%d'),  # تحويل التاريخ إلى صيغة قابلة للإرسال كـ JSON
             'warehouse': dispatch.warehouse.name,
             'beneficiary': dispatch.beneficiary.full_name,
-            'item': dispatch.item.name,
+            'stock_item': dispatch.stock_item.item.name,
         }
         return JsonResponse(data)
     except Exception as e:
@@ -137,7 +148,6 @@ class DamageOperationCreateView(CreateView):
 
 
 
-
 def transfer_create_view(request):
     if request.method == 'POST':
         operation_form = TransferOperationForm(request.POST, request.FILES)
@@ -148,7 +158,7 @@ def transfer_create_view(request):
             transfer_item = item_form.save(commit=False)
             transfer_item.transfer_operation = transfer_operation
             transfer_item.save()
-            return redirect('transfer_create')  # Redirect to a success page after saving
+            return redirect('transfer_success')  # Redirect to a success page after saving
     else:
         operation_form = TransferOperationForm()
         item_form = TransferItemForm()

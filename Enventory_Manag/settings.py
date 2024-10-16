@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'Enventory_Manag.wsgi.application'
 DATABASES = {
      "default": {
          "ENGINE": "django.db.backends.mysql",
-         "NAME": "Warehouses_Managements",
+         "NAME": "Enventory_Manag - Copy",
          "USER": "root",
          "PASSWORD": "",
          "HOST": "127.0.0.1",
